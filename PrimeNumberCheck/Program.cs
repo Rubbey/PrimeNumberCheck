@@ -4,10 +4,14 @@ using System.Diagnostics;
 
 namespace PrimeNumberCheck
 {
-    
+
     class Program
     {
+                
+
         static ulong counter = 0;
+        static double ElapsedSeconds;
+        static long IterationElapsedTime = 0;
 
         static bool IsPrimeInstrumental(BigInteger Num)
         {
@@ -33,36 +37,45 @@ namespace PrimeNumberCheck
             return true;
         }
 
-        static bool IsPrime2(BigInteger Num)
+        static bool IsPrime2Instrumental(BigInteger Num)
         {
-            if (Num < 2) return false;
-            else if (Num < 4) return true;
-            counter++;        
-            if (Num % 2 == 0) return false;
-            else
+            if (Num < 2 | Num % 2 == 0) return false;
+
+            counter++;
+            for (BigInteger u = 5; u <= Num / 2; u += 2)
             {
-                BigInteger Inc = 1, Div = 0;
-                for (BigInteger u = 5; Div < Num / 2; u+=4)
-                {                    
-                    counter++;
-                    Div = u;
-                    if (Num % Div == 0) return false;
-                    if ((Num / Div) < Div) break;
-                    Div += 2;
-                    counter++;
-                    if (Num % Div == 0) return false;
-                    if((Num / Div) < Div) break;
-                }
-                return true;
-            }            
-        }
-        static bool IsPrime3(BigInteger Num)
-        {
-            if (ModularExponentation(2, Num - 1, Num) != 1 % Num) return false;
+                counter++;
+                if (Num % u == 0) return false;
+                if ((Num / u) < u) return true;
+                u += 2;
+                counter++;
+                if (Num % u == 0) return false;
+                if ((Num / u) < u) return true;
+            }
             return true;
         }
 
-        
+        static bool IsPrime2(BigInteger Num)
+        {
+            if (Num < 2 | Num % 2 == 0) return false;
+            for (BigInteger u = 5; u <= Num / 2; u += 2)
+            {
+                if (Num % u == 0) return false;
+                if ((Num / u) < u) return true;
+                u += 2;
+                if (Num % u == 0) return false;
+                if ((Num / u) < u) return true;
+            }
+            return true;
+        }
+
+        static bool test(BigInteger Num, BigInteger u)
+        {
+            return true;
+        }
+
+
+
         static BigInteger ModularExponentation(BigInteger a, BigInteger b, BigInteger n)
         {
             BigInteger i;
@@ -88,35 +101,65 @@ namespace PrimeNumberCheck
 
         static void Main(string[] args)
         {
-            BigInteger[] array = { 101, 1009, 10091, 10191, 100913, 1009139, 10091401, 100914061 };
 
-            /*// Przykładowy algorytm
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            BigInteger[] array = { 100913, 1009139, 10091401, 100914061, 1009140611, 10091406133, 100914061337, 1009140613399 };
+
+            // Przykładowy algorytm.
+
+            Console.WriteLine("Algorytm z wykładów (instrumentacja):");
             for (int i = 0; i < array.Length; i++)
             {
                 counter = 0;
                 Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {IsPrimeInstrumental(array[i])} Counter={counter} ");
             }
+            Console.WriteLine("\n\n");
 
-            double ElapsedSeconds;
-            long IterationElapsedTime = 0;
+
+            Console.WriteLine("Algorytm z wykładów (czas):");
+            ElapsedSeconds = 0;
+            IterationElapsedTime = 0;
             for (int i = 0; i < array.Length; i++)
             {
                 long StartingTime = Stopwatch.GetTimestamp();
                 bool Test = IsPrime(array[i]);
                 long EndingTime = Stopwatch.GetTimestamp();
                 IterationElapsedTime = EndingTime - StartingTime;
-                ElapsedSeconds = IterationElapsedTime * (1.0 / Stopwatch.Frequency);
-                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {Test} Time[s]= {ElapsedSeconds} ");
-            }            
-           */
+                ElapsedSeconds = IterationElapsedTime * (1000.0 / Stopwatch.Frequency);
+                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {Test} Time[ms]= {ElapsedSeconds} ");
+            }
+            Console.WriteLine("\n\n");
 
+
+            // Implementacja własna.
+            Console.WriteLine("Implementacja własna (instrumentacja):");
             for (int i = 0; i < array.Length; i++)
             {
-                counter = 0;
-                
-
-                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {IsPrime2(array[i])} Counter={counter} ");
+                counter = 0;                
+                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {IsPrime2Instrumental(array[i])} Counter={counter} ");
             }
+            Console.WriteLine("\n\n");
+
+
+            Console.WriteLine("Implementacja własna (czas):");
+            ElapsedSeconds = 0;
+            IterationElapsedTime = 0;
+            for (int i = 0; i < array.Length; i++)
+            {
+                long StartingTime = Stopwatch.GetTimestamp();
+                bool Test = IsPrime2(array[i]);
+                long EndingTime = Stopwatch.GetTimestamp();
+                IterationElapsedTime = EndingTime - StartingTime;
+                ElapsedSeconds = IterationElapsedTime * (1000.0 / Stopwatch.Frequency);
+                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {Test} Time[ms]= {ElapsedSeconds} ");
+            }
+            Console.WriteLine("\n\n");
+
+            stopwatch.Stop();
+            Console.WriteLine("Total time [m]: {0}", stopwatch.Elapsed.TotalMinutes);
+
 
 
         }
