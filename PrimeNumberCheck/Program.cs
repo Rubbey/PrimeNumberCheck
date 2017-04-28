@@ -118,6 +118,7 @@ namespace PrimeNumberCheck
             Console.WriteLine("\n\n");
 
 
+
             Console.WriteLine("Algorytm z wykładów (czas):");
             ElapsedSeconds = 0;
             IterationElapsedTime = 0;
