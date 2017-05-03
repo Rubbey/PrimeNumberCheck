@@ -9,17 +9,17 @@ namespace PrimeNumberCheck
     {
 
 
-        static ulong counter = 0;
+        static BigInteger Counter = 0;
         static double ElapsedSeconds;
         static long IterationElapsedTime = 0;
 
-        static bool PrimeNumbers(BigInteger Num)
+        static bool IsPrime2Instrumental(BigInteger Num)
         {
             if (Num < 2) return false;
             else if (Num == 2 | Num == 3) return true;
-            counter++;
+            Counter++;
             if (Num % 2 == 0) return false;
-            counter++;
+            Counter++;
             if (Num % 3 == 0) return false;
             
 
@@ -28,7 +28,26 @@ namespace PrimeNumberCheck
 
             while (BaseNumber * BaseNumber <= Num) // BaseNumber <= sqrt(Num)
             {
-                counter++;
+                Counter++;
+                if (Num % BaseNumber == 0) return false;
+                BaseNumber += IncrementationFactor;
+                IncrementationFactor = 6 - IncrementationFactor;
+            }
+            return true;
+        }
+
+        static bool IsPrime2(BigInteger Num)
+        {
+            if (Num < 2) return false;
+            else if (Num == 2 | Num == 3) return true;
+            else if (Num % 2 == 0) return false;
+            else if (Num % 3 == 0) return false;
+
+            BigInteger BaseNumber = 5;
+            BigInteger IncrementationFactor = 2;
+
+            while (BaseNumber * BaseNumber <= Num)
+            {                
                 if (Num % BaseNumber == 0) return false;
                 BaseNumber += IncrementationFactor;
                 IncrementationFactor = 6 - IncrementationFactor;
@@ -40,11 +59,11 @@ namespace PrimeNumberCheck
         {
             if (Num < 2) return false;
             else if (Num < 4) return true;
-            counter++;
+            Counter++;
             if (Num % 2 == 0) return false;
             else for (BigInteger u = 3; u < Num / 2; u += 2)
                 {
-                    counter++;
+                    Counter++;
                     if (Num % u == 0) return false;
                 }
             return true;
@@ -60,123 +79,70 @@ namespace PrimeNumberCheck
             return true;
         }
 
-        static bool IsPrime2Instrumental(BigInteger Num)
-        {
-            counter++;
-            if (Num < 2 | Num % 2 == 0) return false;
-            if (Num == 3) return false;
-            counter++;
-            for (BigInteger u = 5; u <= Num / 2; u += 4)
-            {
-                counter++;
-                if (Num % u == 0) return false;
-                if ((Num / u) < u) break;
-                u += 2;
-                counter++;
-                if (Num % u == 0) return false;
-                if ((Num / u) < u) break;
-            }
-            return true;
-        }
-
-        static bool IsPrime3Instrumental(BigInteger Num)
-        {
-            counter++;
-            if (Num < 2 | Num % 2 == 0) return false;
-
-            for (BigInteger u = 5; u <= Num / 2; u += 4)
-            {
-                counter++;
-                if (Num % u == 0) return false;
-                if ((Num / u) < u) return true;
-                u += 2;
-                counter++;
-                if (Num % u == 0) return false;
-                if ((Num / u) < u) return true;
-            }
-            return true;
-        }
-
-        static bool IsPrime2(BigInteger Num)
-        {
-            if (Num < 2 | Num % 2 == 0) return false;
-            for (BigInteger u = 3; u <= Num / 2; u += 2)
-            {
-                if (Num % u == 0) return false;
-                if ((Num / u) < u) return true;
-                u += 2;
-                if (Num % u == 0) return false;
-                if ((Num / u) < u) return true;
-            }
-            return true;
-        }
+        
 
 
         static void Main(string[] args)
         {
+            BigInteger[] Array = { 100913, 1009139, 10091401, 100914061, 1009140611, 10091406133, 100914061337, 1009140613399 };
 
-            BigInteger[] array = { 101, 1009, 10091, 100913, 1009139, 10091401, 100914061 }; // , 1009140611, 10091406133, 100914061337, 1009140613399
-
-            // Przykładowy algorytm.
             
             Console.WriteLine("Algorytm z wykładów (instrumentacja):");
-            for (int i = 0; i < array.Length; i++)
+            Console.WriteLine("Test number:    Is prime?    Counter of modulo operation:");
+            for (int i = 0; i < Array.Length; i++)
             {
-                counter = 0;
-                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {IsPrimeInstrumental(array[i])}\t Counter={counter} ");
+                Counter = 0;
+                Console.WriteLine($"{Array[i],-15:N0} {IsPrimeInstrumental(Array[i]),-12} {Counter}");
             }
             Console.WriteLine("\n\n");
-           /* 
+            
                         
             Console.WriteLine("Algorytm z wykładów (czas):");
+            Console.WriteLine("Test number:    Is prime?    Time[ms]:");
             ElapsedSeconds = 0;
             IterationElapsedTime = 0;
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < Array.Length; i++)
             {
                 long StartingTime = Stopwatch.GetTimestamp();
-                bool Test = IsPrime(array[i]);
+                bool Test = IsPrime(Array[i]);
                 long EndingTime = Stopwatch.GetTimestamp();
                 IterationElapsedTime = EndingTime - StartingTime;
                 ElapsedSeconds = IterationElapsedTime * (1000.0 / Stopwatch.Frequency);
-                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {Test}\t Time[ms]= {ElapsedSeconds} ");
+                Console.WriteLine($"{Array[i],-15:N0} {Test,-12}  {ElapsedSeconds} ");
             }
             Console.WriteLine("\n\n");
-            */
+            
 
             // Implementacja własna.
             Console.WriteLine("Implementacja własna (instrumentacja):");
-            for (int i = 0; i < array.Length; i++)
+            Console.WriteLine("Test number:    Is prime?    Counter of modulo operation:");
+            for (int i = 0; i < Array.Length; i++)
             {
-                counter = 0;
-                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {PrimeNumbers(array[i])}\t Counter={counter} ");
+                Counter = 0;
+                Console.WriteLine($"{Array[i],-15:N0} {IsPrime2Instrumental(Array[i]),-12} {Counter}");
             }
             Console.WriteLine("\n\n");
+            
 
-            Console.WriteLine("Implementacja własna 2 (instrumentacja):");
-            for (int i = 0; i < array.Length; i++)
-            {
-                counter = 0;
-                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {IsPrime3Instrumental(array[i])}\t Counter={counter} ");
-            }
-            Console.WriteLine("\n\n");
-
-            /*
             Console.WriteLine("Implementacja własna (czas):");
+            Console.WriteLine("Test number:    Is prime?    Time[ms]:");
             ElapsedSeconds = 0;
             IterationElapsedTime = 0;
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < Array.Length; i++)
             {
                 long StartingTime = Stopwatch.GetTimestamp();
-                bool Test = IsPrime2(array[i]);
+                bool Test = IsPrime2(Array[i]);
                 long EndingTime = Stopwatch.GetTimestamp();
                 IterationElapsedTime = EndingTime - StartingTime;
                 ElapsedSeconds = IterationElapsedTime * (1000.0 / Stopwatch.Frequency);
-                Console.WriteLine($"Testuję liczbę: {array[i],-15:N0} {Test}\t Time[ms]= {ElapsedSeconds} ");
+                Console.WriteLine($"{Array[i],-15:N0} {Test,-12} {ElapsedSeconds}");
             }
             Console.WriteLine("\n\n");
-            */
+            
             Console.ReadLine();
-
+            Console.WriteLine("Uwaga nastąpi zamknięcie okna!!! Skopiuj i zapisz wyniki");
+            Console.ReadLine();
+            Console.ReadLine();
 
 
         }
